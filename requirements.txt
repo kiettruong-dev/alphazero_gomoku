@@ -1,0 +1,18 @@
+# requirements.txt - moi truong PyTorch, chay duoc tren GPU doi moi
+# (RTX 30/40/50, GPU tren Google Colab hien nay, v.v.)
+#
+# Cai dat:
+#   pip install -r requirements.txt
+#
+# Rieng torch: neu can ban GPU cu the cho dung phien ban CUDA cua may/Colab,
+# hay cai theo huong dan chinh thuc tai https://pytorch.org/get-started/locally/
+# vi du (CUDA 12.1):
+#   pip install torch --index-url https://download.pytorch.org/whl/cu121
+# Google Colab thuong da co san torch + CUDA phu hop, khong can cai lai.
+
+torch>=2.1
+numpy
+openpyxl
+pillow
+pygame
+mpi4py          # chi can neu dung train_mpi.py / human_play_MPI.py (chay MPI da tien trinh)
