@@ -396,15 +396,17 @@ class TrainPipeline():
         # play_data: [(state, mcts_prob, winner_z), ..., ...]
         # train an epoch
 
-        tmp_buffer = np.array(self.data_buffer)
-        np.random.shuffle(tmp_buffer)
-        steps = len(tmp_buffer)//self.batch_size
-        print('tmp buffer: {}, steps: {}'.format(len(tmp_buffer),steps))
+        tmp_buffer = list(self.data_buffer)   # copy list, KHÔNG ép sang np.array
+        random.shuffle(tmp_buffer)            # shuffle nguyên khối (state, probs, winner) cùng lúc, giữ đúng tương ứng
+
+        steps = len(tmp_buffer) // self.batch_size
+        print('tmp buffer: {}, steps: {}'.format(len(tmp_buffer), steps))
         for i in range(steps):
-            mini_batch = tmp_buffer[i*self.batch_size:(i+1)*self.batch_size]
-            state_batch = [data[0] for data in mini_batch]
-            mcts_probs_batch = [data[1] for data in mini_batch]
-            winner_batch = [data[2] for data in mini_batch]
+            batch = tmp_buffer[i*self.batch_size : (i+1)*self.batch_size]
+            state_batch, mcts_probs_batch, winner_batch = zip(*batch)
+            state_batch = np.array(state_batch)
+            mcts_probs_batch = np.array(mcts_probs_batch)
+            winner_batch = np.array(winner_batch)
 
             old_probs, old_v = self.policy_value_net.policy_value(state_batch=state_batch,
                                                                   actin_fc=self.policy_value_net.action_fc_test,
