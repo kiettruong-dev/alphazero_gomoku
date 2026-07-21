@@ -434,7 +434,7 @@ class TrainPipeline():
                 # print some information, not too much
                 logger.info('batch: %d, length: %d, kl:%.5f, loss:%s, entropy:%s, '
                             'explained_var_old:%.3f, explained_var_new:%.3f',
-                            i, len(mini_batch), kl, loss, entropy,
+                            i, len(batch), kl, loss, entropy,
                             explained_var_old, explained_var_new)
 
         return loss, entropy
