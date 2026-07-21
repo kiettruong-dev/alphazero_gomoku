@@ -84,7 +84,7 @@ def _self_play_worker(args):
     # - KHONG dung console -> terminal chinh khong bi 8-10 tien trinh
     #   in de len nhau nua
     worker_tag = "pid{}".format(os.getpid())
-    setup_worker_logging(worker_tag, level=logging.DEBUG)
+    setup_worker_logging(worker_tag, level=logging.INFO)
 
     t0 = time.time()
 
