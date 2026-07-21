@@ -479,7 +479,8 @@ class Game(object):
         mcts_player_id = np.random.choice([p1, p2])
         
         states, mcts_probs, current_players = [], [], []
-        
+        logger.info("========== BAT DAU VAN TU CHOI MOI (board %dx%d) ==========",
+                    self.board.width, self.board.height)
         while True:
             current_player = self.board.get_current_player()
             
@@ -516,6 +517,11 @@ class Game(object):
                 
                 # Reset MCTS player sau ván đấu
                 player.reset_player()
+                if winner != -1:
+                    logger.info("========== VAN KET THUC: nguoi thang la player %s, tong %d nuoc ==========",
+                                winner, len(current_players))
+                else:
+                    logger.info("========== VAN KET THUC: HOA, tong %d nuoc ==========", len(current_players))
                 if is_shown:
                     if winner != -1:
                         print(f"Game end. Winner is player {winner}")
