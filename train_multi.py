@@ -501,7 +501,7 @@ class TrainPipeline():
                 logger.info("===== batch tu choi thu %d, so nuoc di trong van (episode_len)=%d =====",
                             i+1, self.episode_len)
 
-                if len(self.data_buffer) > self.batch_size*5:
+                if len(self.data_buffer) > self.batch_size:
                     # train collected data
                     train_data_start_time = time.time()
                     loss, entropy = self.policy_update()

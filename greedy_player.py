@@ -123,7 +123,7 @@ class GreedyPlayer(object):
         if not board.states:
             center = (board.height // 2) * board.width + (board.width // 2)
             logger.info("Nuoc thu %d (Greedy): chon action=%s (khai cuoc, o trung tam)",
-                        move_number + 1, move)
+                        move_number + 1, center)
             return center, None
         best_score = None
         best_moves = []
