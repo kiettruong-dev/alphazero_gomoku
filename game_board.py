@@ -5,6 +5,7 @@ Created on Fri Dec  7 15:14:24 2018
 @author: initial-h
 """
 
+import random
 import numpy as np
 from collections import deque
 try:
@@ -464,71 +465,102 @@ class Game(object):
                     else:
                         print("Game end. Tie")
                 return winner, zip(states, mcts_probs, winners_z)
+    
+
     def start_self_play_with_greedy(self, player, is_shown=0):
-        """
-        Bắt đầu một ván đấu giữa MCTS Player (AlphaZero) và Greedy Player.
-        Thu thập dữ liệu tự chơi cho MCTS Player.
-        """
-        self.board.init_board(start_player=0)
+        '''
+        "Tu choi" nhung doi thu la GreedyPlayer thay vi chinh AlphaZero
+        (khac voi start_self_play() o tren, noi CUNG MOT player tu danh
+        ca 2 ben). Muc dich: da dang hoa du lieu tu choi bang mot doi
+        thu KHAC kieu (khong tim kiem cay), tranh du lieu bi "dong dieu"
+        do 2 ben luon dung chung 1 policy.
+
+        QUAN TRONG: chi luu du lieu train (state, mcts_prob, z) o NHUNG
+        NUOC DI CUA `player` (AlphaZero). Nuoc di cua GreedyPlayer KHONG
+        duoc luu, vi Greedy khong co phan phoi xac suat tren cay tim kiem
+        (mcts_prob) de lam target hoc cho policy net - no chi la heuristic
+        cham diem 1-nuoc-nhin-xa.
+
+        De tranh AlphaZero luon co dinh di truoc (hoac luon di sau) gay
+        lech phan bo du lieu, moi van se ngau nhien chon AlphaZero la
+        player1 (X, di truoc) hay player2 (O, di sau).
+        '''
+        self.board.init_board()
         p1, p2 = self.board.players
-        
-        # Khởi tạo đối thủ Greedy
-        greedy_player = GreedyPlayer()
-        
-        # Quyết định ngẫu nhiên ai đi trước (0: MCTS, 1: Greedy)
-        mcts_player_id = np.random.choice([p1, p2])
-        
+        greedy = GreedyPlayer()
+
+        # ngau nhien: luc AlphaZero di truoc, luc di sau
+        if random.random() < 0.5:
+            players = {p1: player, p2: greedy}
+            az_id, greedy_id = p1, p2
+        else:
+            players = {p1: greedy, p2: player}
+            az_id, greedy_id = p2, p1
+
+        greedy.set_player_ind(greedy_id)
+        greedy.reset_player()
+        player.reset_player()
+
         states, mcts_probs, current_players = [], [], []
-        logger.info("========== BAT DAU VAN TU CHOI MOI (board %dx%d) ==========",
-                    self.board.width, self.board.height)
+        logger.info("========== BAT DAU VAN TU CHOI VOI GREEDY (board %dx%d), AlphaZero la player %s ==========",
+                    self.board.width, self.board.height, az_id)
+
         while True:
             current_player = self.board.get_current_player()
-            
-            if current_player == mcts_player_id:
-                # Lu lượt của MCTS Player -> Thu thập xác suất nước đi (probs)
+            player_in_turn = players[current_player]
+            is_az_turn = (player_in_turn is player)
+
+            if is_az_turn:
+                # luot cua AlphaZero: lay ca nuoc di lan phan phoi xac suat
+                # (is_selfplay=True de co Dirichlet noise + nhiet do giong
+                # tu choi binh thuong) de luu lam du lieu train
                 move, move_probs = player.get_action(self.board,
-                                                 is_selfplay=True,
-                                                 print_probs_value=False)
-                # Lưu dữ liệu trạng thái phục vụ việc huấn luyện
+                                                     is_selfplay=True,
+                                                     print_probs_value=False)
                 states.append(self.board.current_state())
                 mcts_probs.append(move_probs)
-                current_players.append(current_player)
+                current_players.append(self.board.current_player)
             else:
-                # Lu lượt của Greedy Player
-                move = greedy_player.get_action(self.board)
-                # Lưu ý: Không bắt buộc phải lưu state/probs của Greedy 
-                # trừ khi bạn muốn train mô hình trên cả dữ liệu của Greedy.
+                # luot cua Greedy: chi lay nuoc di, KHONG luu vao du lieu train
+                move, _ = greedy.get_action(self.board,
+                                            is_selfplay=False,
+                                            print_probs_value=False)
+                # Greedy vua chon "move" (chua danh vao board), can bao cho
+                # cay MCTS cua AlphaZero biet nuoc di THAT nay, dung y het
+                # co che ma chinh MCTSPlayer.get_action() dung noi bo khi
+                # is_selfplay=False (no cung goi
+                # self.mcts.update_with_move(board.last_move) de dong bo voi
+                # nuoc di cua doi thu). Neu nhanh con ung voi "move" da tung
+                # duoc MCTS mo rong truoc do, cay se duoc GIU LAI (khong mat
+                # cong tim kiem lai tu dau); neu chua tung mo rong nhanh do,
+                # update_with_move() se tu tao goc cay moi.
+                player.mcts.update_with_move(move)
 
-            # Thực hiện nước đi trên bàn cờ
             self.board.do_move(move)
-            
+
             if is_shown:
                 self.graphic(self.board, p1, p2)
-                
+
             end, winner = self.board.game_end()
             if end:
-                # Tính toán phần thưởng (winner_z) cho MCTS Player
+                # winner from the perspective of the current player of each state
                 winners_z = np.zeros(len(current_players))
                 if winner != -1:
-                    # Nếu MCTS thắng -> 1.0, thua -> -1.0
-                    reward = 1.0 if winner == mcts_player_id else -1.0
-                    winners_z[np.array(current_players) == winner] = reward
-                    winners_z[np.array(current_players) != winner] = -reward
-                
-                # Reset MCTS player sau ván đấu
+                    winners_z[np.array(current_players) == winner] = 1.0
+                    winners_z[np.array(current_players) != winner] = -1.0
+                # reset MCTS root node
                 player.reset_player()
+                greedy.reset_player()
                 if winner != -1:
-                    logger.info("========== VAN KET THUC: nguoi thang la player %s, tong %d nuoc ==========",
-                                winner, len(current_players))
+                    logger.info("========== VAN (vs Greedy) KET THUC: nguoi thang la player %s "
+                                "(AlphaZero la player %s), tong %d nuoc ==========",
+                                winner, az_id, len(self.board.states))
                 else:
-                    logger.info("========== VAN KET THUC: HOA, tong %d nuoc ==========", len(current_players))
+                    logger.info("========== VAN (vs Greedy) KET THUC: HOA, tong %d nuoc ==========",
+                                len(self.board.states))
                 if is_shown:
                     if winner != -1:
-                        print(f"Game end. Winner is player {winner}")
+                        print("Game end. Winner is player:", winner)
                     else:
                         print("Game end. Tie")
-                        
-                # Trả về dữ liệu đã thu thập để đưa vào Replay Buffer
                 return winner, zip(states, mcts_probs, winners_z)
-
-

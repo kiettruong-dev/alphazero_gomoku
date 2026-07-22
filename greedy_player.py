@@ -104,6 +104,7 @@ class GreedyPlayer(object):
 
     def reset_player(self):
         # greedy khong co trang thai/cay can reset, giu de tuong thich interface
+        
         pass
 
     def get_action(self, board, is_selfplay=False, print_probs_value=False):
