@@ -118,11 +118,13 @@ class GreedyPlayer(object):
         me = self.player
         opponent = board.players[0] if me == board.players[1] else board.players[1]
 
+        move_number = board.width * board.height - len(board.availables)
         # Neu bang trong (nuoc di dau tien), chon o gan trung tam
         if not board.states:
             center = (board.height // 2) * board.width + (board.width // 2)
+            logger.info("Nuoc thu %d (Greedy): chon action=%s (khai cuoc, o trung tam)",
+                        move_number + 1, move)
             return center, None
-        move_number = board.width * board.height - len(board.availables)
         best_score = None
         best_moves = []
         for move in sensible_moves:
