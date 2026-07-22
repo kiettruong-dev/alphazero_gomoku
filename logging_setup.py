@@ -39,7 +39,12 @@ def setup_logging(log_dir="logs", level=logging.DEBUG, console_level=logging.INF
     logger.setLevel(logging.DEBUG)  # logger goc luon mo DEBUG, handler moi ben quyet dinh loc gi
     logger.handlers.clear()  # tranh nhan doi handler neu goi lai nhieu lan
 
-    fmt_file = logging.Formatter("%(asctime)s [%(levelname)s] %(message)s",
+    # QUAN TRONG: them .%(msecs)03d vao chuoi FORMAT (khong phai datefmt,
+    # vi datefmt cua logging KHONG ho tro %f/mili-giay) de phan biet ro
+    # cac dong log xay ra CACH NHAU vai tram mili-giay (vd nuoc di cua
+    # GreedyPlayer gan nhu tuc thi ngay sau nuoc cua AlphaZero) thay vi
+    # nhin giong het nhau khi chi lam tron toi giay.
+    fmt_file = logging.Formatter("%(asctime)s.%(msecs)03d [%(levelname)s] %(message)s",
                                   datefmt="%H:%M:%S")
     fh = logging.FileHandler(log_path, encoding="utf-8")
     fh.setLevel(level)
@@ -84,7 +89,7 @@ def setup_worker_logging(worker_tag, log_dir="logs/selfplay_workers", level=logg
     logger.setLevel(logging.DEBUG)
     logger.handlers.clear()
 
-    fmt_file = logging.Formatter("%(asctime)s [%(levelname)s] %(message)s",
+    fmt_file = logging.Formatter("%(asctime)s.%(msecs)03d [%(levelname)s] %(message)s",
                                   datefmt="%H:%M:%S")
     fh = logging.FileHandler(log_path, encoding="utf-8")
     fh.setLevel(level)
