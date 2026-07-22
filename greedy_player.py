@@ -20,7 +20,9 @@ mcts_alphaZero.py) de co the dung truc tiep trong game_board.Game.start_play():
 
 from __future__ import print_function
 import random
+from logging_setup import get_logger
 
+logger = get_logger()
 # Thang diem cac the co: (so quan lien tiep, so dau ho) -> diem
 SCORE_TABLE = {
     (5, 0): 100000, (5, 1): 100000, (5, 2): 100000,  # >=5 la thang roi
@@ -120,7 +122,7 @@ class GreedyPlayer(object):
         if not board.states:
             center = (board.height // 2) * board.width + (board.width // 2)
             return center, None
-
+        move_number = board.width * board.height - len(board.availables)
         best_score = None
         best_moves = []
         for move in sensible_moves:
@@ -135,7 +137,8 @@ class GreedyPlayer(object):
                 best_moves.append(move)
 
         move = random.choice(best_moves)
-
+        logger.info("Nuoc thu %d (Greedy): chon action=%s, diem %.1f",
+                            move_number + 1, move, best_score)
         if print_probs_value:
             print("GreedyPlayer chon nuoc {} voi diem {:.1f}".format(
                 board.move_to_location(move), best_score))

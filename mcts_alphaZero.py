@@ -346,7 +346,7 @@ class MCTSPlayer(object):
                     probs = softmax(1.0 / temp * np.log(np.array(visits) + 1e-10))
                     move = np.random.choice(acts, p=probs)
 
-                logger.info("Nuoc thu %d (tu choi): chon action=%s, temp=%.4f, N(action)=%d",
+                logger.info("Nuoc thu %d (alphaZero): chon action=%s, temp=%.4f, N(action)=%d",
                             move_number + 1, move, temp, visits[list(acts).index(move)])
 
                 self.mcts.update_with_move(move)
