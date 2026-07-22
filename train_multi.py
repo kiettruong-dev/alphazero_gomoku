@@ -181,7 +181,7 @@ class TrainPipeline():
         # nen dat >= num_selfplay_workers de tan dung het cac tien trinh song song
         self.play_batch_size = 200
         self.check_freq = 1
-        self.game_batch_num = 1 # total game to train
+        self.game_batch_num = 5 # total game to train
         self.best_win_ratio = 0.0
         # num of simulations used for the pure mcts, which is used as
         # the opponent to evaluate the trained policy

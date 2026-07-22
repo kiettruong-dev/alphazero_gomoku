@@ -1,0 +1,330 @@
+13:43:22.242 [INFO] ========== BAT DAU VAN TU CHOI VOI GREEDY (board 15x15), AlphaZero la player 2 ==========
+13:43:22.242 [INFO] Nuoc thu 1 (Greedy): chon action=112 (khai cuoc, o trung tam)
+13:43:40.463 [INFO] Nuoc thu 2 (alphaZero): chon action=88, temp=1.0000, N(action)=4
+13:43:40.467 [INFO] Nuoc thu 3 (Greedy): chon action=128, diem 106.6
+13:43:56.128 [INFO] Nuoc thu 4 (alphaZero): chon action=38, temp=1.0000, N(action)=14
+13:43:56.130 [INFO] Nuoc thu 5 (Greedy): chon action=144, diem 1006.6
+13:44:12.209 [INFO] Nuoc thu 6 (alphaZero): chon action=59, temp=1.0000, N(action)=4
+13:44:12.212 [INFO] Nuoc thu 7 (Greedy): chon action=160, diem 10006.6
+13:44:27.753 [INFO] Nuoc thu 8 (alphaZero): chon action=140, temp=1.0000, N(action)=4
+13:44:27.759 [INFO] Nuoc thu 9 (Greedy): chon action=176, diem 100006.6
+13:44:27.760 [INFO] ========== VAN (vs Greedy) KET THUC: nguoi thang la player 1 (AlphaZero la player 2), tong 9 nuoc ==========
+13:44:28.256 [INFO] ========== BAT DAU VAN TU CHOI VOI GREEDY (board 15x15), AlphaZero la player 2 ==========
+13:44:28.257 [INFO] Nuoc thu 1 (Greedy): chon action=112 (khai cuoc, o trung tam)
+13:44:44.763 [INFO] Nuoc thu 2 (alphaZero): chon action=34, temp=1.0000, N(action)=4
+13:44:44.766 [INFO] Nuoc thu 3 (Greedy): chon action=97, diem 106.6
+13:45:00.904 [INFO] Nuoc thu 4 (alphaZero): chon action=134, temp=1.0000, N(action)=4
+13:45:00.907 [INFO] Nuoc thu 5 (Greedy): chon action=127, diem 1006.6
+13:45:17.163 [INFO] Nuoc thu 6 (alphaZero): chon action=53, temp=1.0000, N(action)=12
+13:45:17.165 [INFO] Nuoc thu 7 (Greedy): chon action=82, diem 10006.6
+13:45:33.345 [INFO] Nuoc thu 8 (alphaZero): chon action=110, temp=1.0000, N(action)=4
+13:45:33.349 [INFO] Nuoc thu 9 (Greedy): chon action=67, diem 100095.7
+13:45:33.349 [INFO] ========== VAN (vs Greedy) KET THUC: nguoi thang la player 1 (AlphaZero la player 2), tong 9 nuoc ==========
+13:45:33.722 [INFO] ========== BAT DAU VAN TU CHOI VOI GREEDY (board 15x15), AlphaZero la player 2 ==========
+13:45:33.723 [INFO] Nuoc thu 1 (Greedy): chon action=112 (khai cuoc, o trung tam)
+13:45:50.029 [INFO] Nuoc thu 2 (alphaZero): chon action=149, temp=1.0000, N(action)=4
+13:45:50.031 [INFO] Nuoc thu 3 (Greedy): chon action=128, diem 106.6
+13:46:05.630 [INFO] Nuoc thu 4 (alphaZero): chon action=76, temp=1.0000, N(action)=6
+13:46:05.632 [INFO] Nuoc thu 5 (Greedy): chon action=96, diem 1006.6
+13:46:21.328 [INFO] Nuoc thu 6 (alphaZero): chon action=107, temp=1.0000, N(action)=4
+13:46:21.330 [INFO] Nuoc thu 7 (Greedy): chon action=80, diem 10006.6
+13:46:37.010 [INFO] Nuoc thu 8 (alphaZero): chon action=22, temp=1.0000, N(action)=18
+13:46:37.012 [INFO] Nuoc thu 9 (Greedy): chon action=64, diem 100006.6
+13:46:37.012 [INFO] ========== VAN (vs Greedy) KET THUC: nguoi thang la player 1 (AlphaZero la player 2), tong 9 nuoc ==========
+13:46:37.375 [INFO] ========== BAT DAU VAN TU CHOI VOI GREEDY (board 15x15), AlphaZero la player 1 ==========
+13:46:52.826 [INFO] Nuoc thu 1 (alphaZero): chon action=135, temp=1.0000, N(action)=4
+13:46:52.830 [INFO] Nuoc thu 2 (Greedy): chon action=120, diem 96.7
+13:47:08.483 [INFO] Nuoc thu 3 (alphaZero): chon action=187, temp=1.0000, N(action)=4
+13:47:08.487 [INFO] Nuoc thu 4 (Greedy): chon action=201, diem 96.7
+13:47:24.090 [INFO] Nuoc thu 5 (alphaZero): chon action=109, temp=1.0000, N(action)=4
+13:47:24.093 [INFO] Nuoc thu 6 (Greedy): chon action=186, diem 195.7
+13:47:39.419 [INFO] Nuoc thu 7 (alphaZero): chon action=14, temp=1.0000, N(action)=2
+13:47:39.421 [INFO] Nuoc thu 8 (Greedy): chon action=171, diem 1095.7
+13:47:55.128 [INFO] Nuoc thu 9 (alphaZero): chon action=183, temp=1.0000, N(action)=4
+13:47:55.131 [INFO] Nuoc thu 10 (Greedy): chon action=156, diem 10006.6
+13:48:10.753 [INFO] Nuoc thu 11 (alphaZero): chon action=24, temp=1.0000, N(action)=4
+13:48:10.756 [INFO] Nuoc thu 12 (Greedy): chon action=141, diem 100006.6
+13:48:10.756 [INFO] ========== VAN (vs Greedy) KET THUC: nguoi thang la player 2 (AlphaZero la player 1), tong 12 nuoc ==========
+13:48:11.093 [INFO] ========== BAT DAU VAN TU CHOI VOI GREEDY (board 15x15), AlphaZero la player 1 ==========
+13:48:27.114 [INFO] Nuoc thu 1 (alphaZero): chon action=146, temp=1.0000, N(action)=4
+13:48:27.116 [INFO] Nuoc thu 2 (Greedy): chon action=145, diem 96.7
+13:48:42.582 [INFO] Nuoc thu 3 (alphaZero): chon action=78, temp=1.0000, N(action)=4
+13:48:42.583 [INFO] Nuoc thu 4 (Greedy): chon action=161, diem 195.7
+13:48:58.356 [INFO] Nuoc thu 5 (alphaZero): chon action=120, temp=1.0000, N(action)=8
+13:48:58.358 [INFO] Nuoc thu 6 (Greedy): chon action=129, diem 1006.6
+13:49:13.955 [INFO] Nuoc thu 7 (alphaZero): chon action=131, temp=1.0000, N(action)=4
+13:49:13.959 [INFO] Nuoc thu 8 (Greedy): chon action=177, diem 10006.6
+13:49:29.484 [INFO] Nuoc thu 9 (alphaZero): chon action=114, temp=1.0000, N(action)=4
+13:49:29.487 [INFO] Nuoc thu 10 (Greedy): chon action=113, diem 100095.7
+13:49:29.487 [INFO] ========== VAN (vs Greedy) KET THUC: nguoi thang la player 2 (AlphaZero la player 1), tong 10 nuoc ==========
+13:49:29.846 [INFO] ========== BAT DAU VAN TU CHOI VOI GREEDY (board 15x15), AlphaZero la player 2 ==========
+13:49:29.846 [INFO] Nuoc thu 1 (Greedy): chon action=112 (khai cuoc, o trung tam)
+13:49:45.758 [INFO] Nuoc thu 2 (alphaZero): chon action=127, temp=1.0000, N(action)=4
+13:49:45.761 [INFO] Nuoc thu 3 (Greedy): chon action=126, diem 195.7
+13:50:01.572 [INFO] Nuoc thu 4 (alphaZero): chon action=136, temp=1.0000, N(action)=4
+13:50:01.575 [INFO] Nuoc thu 5 (Greedy): chon action=140, diem 1006.6
+13:50:17.220 [INFO] Nuoc thu 6 (alphaZero): chon action=174, temp=1.0000, N(action)=8
+13:50:17.222 [INFO] Nuoc thu 7 (Greedy): chon action=98, diem 10006.6
+13:50:32.656 [INFO] Nuoc thu 8 (alphaZero): chon action=199, temp=1.0000, N(action)=4
+13:50:32.659 [INFO] Nuoc thu 9 (Greedy): chon action=154, diem 100006.6
+13:50:32.660 [INFO] ========== VAN (vs Greedy) KET THUC: nguoi thang la player 1 (AlphaZero la player 2), tong 9 nuoc ==========
+13:50:32.998 [INFO] ========== BAT DAU VAN TU CHOI VOI GREEDY (board 15x15), AlphaZero la player 2 ==========
+13:50:32.998 [INFO] Nuoc thu 1 (Greedy): chon action=112 (khai cuoc, o trung tam)
+13:50:48.928 [INFO] Nuoc thu 2 (alphaZero): chon action=111, temp=1.0000, N(action)=4
+13:50:48.930 [INFO] Nuoc thu 3 (Greedy): chon action=126, diem 195.7
+13:51:04.457 [INFO] Nuoc thu 4 (alphaZero): chon action=43, temp=1.0000, N(action)=2
+13:51:04.458 [INFO] Nuoc thu 5 (Greedy): chon action=98, diem 1006.6
+13:51:20.557 [INFO] Nuoc thu 6 (alphaZero): chon action=20, temp=1.0000, N(action)=6
+13:51:20.558 [INFO] Nuoc thu 7 (Greedy): chon action=84, diem 10006.6
+13:51:36.262 [INFO] Nuoc thu 8 (alphaZero): chon action=46, temp=1.0000, N(action)=4
+13:51:36.264 [INFO] Nuoc thu 9 (Greedy): chon action=70, diem 100006.6
+13:51:36.264 [INFO] ========== VAN (vs Greedy) KET THUC: nguoi thang la player 1 (AlphaZero la player 2), tong 9 nuoc ==========
+13:51:36.639 [INFO] ========== BAT DAU VAN TU CHOI VOI GREEDY (board 15x15), AlphaZero la player 1 ==========
+13:51:52.536 [INFO] Nuoc thu 1 (alphaZero): chon action=84, temp=1.0000, N(action)=4
+13:51:52.538 [INFO] Nuoc thu 2 (Greedy): chon action=100, diem 96.7
+13:52:07.678 [INFO] Nuoc thu 3 (alphaZero): chon action=33, temp=1.0000, N(action)=6
+13:52:07.680 [INFO] Nuoc thu 4 (Greedy): chon action=85, diem 195.7
+13:52:22.958 [INFO] Nuoc thu 5 (alphaZero): chon action=41, temp=1.0000, N(action)=4
+13:52:22.961 [INFO] Nuoc thu 6 (Greedy): chon action=70, diem 1095.7
+13:52:38.693 [INFO] Nuoc thu 7 (alphaZero): chon action=187, temp=1.0000, N(action)=6
+13:52:38.695 [INFO] Nuoc thu 8 (Greedy): chon action=55, diem 10095.7
+13:52:54.182 [INFO] Nuoc thu 9 (alphaZero): chon action=99, temp=1.0000, N(action)=4
+13:52:54.185 [INFO] Nuoc thu 10 (Greedy): chon action=40, diem 100095.7
+13:52:54.185 [INFO] ========== VAN (vs Greedy) KET THUC: nguoi thang la player 2 (AlphaZero la player 1), tong 10 nuoc ==========
+13:52:54.584 [INFO] ========== BAT DAU VAN TU CHOI VOI GREEDY (board 15x15), AlphaZero la player 2 ==========
+13:52:54.584 [INFO] Nuoc thu 1 (Greedy): chon action=112 (khai cuoc, o trung tam)
+13:53:10.349 [INFO] Nuoc thu 2 (alphaZero): chon action=210, temp=1.0000, N(action)=4
+13:53:10.351 [INFO] Nuoc thu 3 (Greedy): chon action=127, diem 106.6
+13:53:26.277 [INFO] Nuoc thu 4 (alphaZero): chon action=100, temp=1.0000, N(action)=4
+13:53:26.280 [INFO] Nuoc thu 5 (Greedy): chon action=142, diem 1006.6
+13:53:41.741 [INFO] Nuoc thu 6 (alphaZero): chon action=19, temp=1.0000, N(action)=6
+13:53:41.751 [INFO] Nuoc thu 7 (Greedy): chon action=157, diem 10006.6
+13:53:57.175 [INFO] Nuoc thu 8 (alphaZero): chon action=128, temp=1.0000, N(action)=4
+13:53:57.177 [INFO] Nuoc thu 9 (Greedy): chon action=97, diem 100006.6
+13:53:57.177 [INFO] ========== VAN (vs Greedy) KET THUC: nguoi thang la player 1 (AlphaZero la player 2), tong 9 nuoc ==========
+13:53:57.566 [INFO] ========== BAT DAU VAN TU CHOI VOI GREEDY (board 15x15), AlphaZero la player 1 ==========
+13:54:12.957 [INFO] Nuoc thu 1 (alphaZero): chon action=134, temp=1.0000, N(action)=4
+13:54:12.960 [INFO] Nuoc thu 2 (Greedy): chon action=149, diem 96.7
+13:54:28.562 [INFO] Nuoc thu 3 (alphaZero): chon action=157, temp=1.0000, N(action)=4
+13:54:28.564 [INFO] Nuoc thu 4 (Greedy): chon action=142, diem 96.7
+13:54:43.794 [INFO] Nuoc thu 5 (alphaZero): chon action=217, temp=1.0000, N(action)=4
+13:54:43.796 [INFO] Nuoc thu 6 (Greedy): chon action=143, diem 195.7
+13:54:59.720 [INFO] Nuoc thu 7 (alphaZero): chon action=90, temp=1.0000, N(action)=6
+13:54:59.722 [INFO] Nuoc thu 8 (Greedy): chon action=141, diem 1095.7
+13:55:15.289 [INFO] Nuoc thu 9 (alphaZero): chon action=178, temp=1.0000, N(action)=4
+13:55:15.292 [INFO] Nuoc thu 10 (Greedy): chon action=144, diem 10006.6
+13:55:31.078 [INFO] Nuoc thu 11 (alphaZero): chon action=130, temp=1.0000, N(action)=4
+13:55:31.080 [INFO] Nuoc thu 12 (Greedy): chon action=145, diem 100095.7
+13:55:31.080 [INFO] ========== VAN (vs Greedy) KET THUC: nguoi thang la player 2 (AlphaZero la player 1), tong 12 nuoc ==========
+13:55:31.466 [INFO] ========== BAT DAU VAN TU CHOI VOI GREEDY (board 15x15), AlphaZero la player 2 ==========
+13:55:31.466 [INFO] Nuoc thu 1 (Greedy): chon action=112 (khai cuoc, o trung tam)
+13:55:47.189 [INFO] Nuoc thu 2 (alphaZero): chon action=125, temp=1.0000, N(action)=4
+13:55:47.191 [INFO] Nuoc thu 3 (Greedy): chon action=111, diem 195.7
+13:56:02.555 [INFO] Nuoc thu 4 (alphaZero): chon action=218, temp=1.0000, N(action)=4
+13:56:02.557 [INFO] Nuoc thu 5 (Greedy): chon action=110, diem 1095.7
+13:56:18.295 [INFO] Nuoc thu 6 (alphaZero): chon action=164, temp=1.0000, N(action)=16
+13:56:18.298 [INFO] Nuoc thu 7 (Greedy): chon action=109, diem 10095.7
+13:56:34.009 [INFO] Nuoc thu 8 (alphaZero): chon action=216, temp=1.0000, N(action)=4
+13:56:34.012 [INFO] Nuoc thu 9 (Greedy): chon action=108, diem 100006.6
+13:56:34.012 [INFO] ========== VAN (vs Greedy) KET THUC: nguoi thang la player 1 (AlphaZero la player 2), tong 9 nuoc ==========
+13:56:34.354 [INFO] ========== BAT DAU VAN TU CHOI VOI GREEDY (board 15x15), AlphaZero la player 2 ==========
+13:56:34.354 [INFO] Nuoc thu 1 (Greedy): chon action=112 (khai cuoc, o trung tam)
+13:56:49.752 [INFO] Nuoc thu 2 (alphaZero): chon action=80, temp=1.0000, N(action)=4
+13:56:49.754 [INFO] Nuoc thu 3 (Greedy): chon action=98, diem 106.6
+13:57:05.328 [INFO] Nuoc thu 4 (alphaZero): chon action=45, temp=1.0000, N(action)=8
+13:57:05.331 [INFO] Nuoc thu 5 (Greedy): chon action=126, diem 1006.6
+13:57:20.829 [INFO] Nuoc thu 6 (alphaZero): chon action=222, temp=1.0000, N(action)=4
+13:57:20.832 [INFO] Nuoc thu 7 (Greedy): chon action=84, diem 10006.6
+13:57:36.413 [INFO] Nuoc thu 8 (alphaZero): chon action=174, temp=1.0000, N(action)=6
+13:57:36.416 [INFO] Nuoc thu 9 (Greedy): chon action=70, diem 100006.6
+13:57:36.417 [INFO] ========== VAN (vs Greedy) KET THUC: nguoi thang la player 1 (AlphaZero la player 2), tong 9 nuoc ==========
+13:57:36.764 [INFO] ========== BAT DAU VAN TU CHOI VOI GREEDY (board 15x15), AlphaZero la player 1 ==========
+13:57:52.410 [INFO] Nuoc thu 1 (alphaZero): chon action=33, temp=1.0000, N(action)=6
+13:57:52.413 [INFO] Nuoc thu 2 (Greedy): chon action=17, diem 96.7
+13:58:07.448 [INFO] Nuoc thu 3 (alphaZero): chon action=59, temp=1.0000, N(action)=4
+13:58:07.450 [INFO] Nuoc thu 4 (Greedy): chon action=18, diem 195.7
+13:58:23.283 [INFO] Nuoc thu 5 (alphaZero): chon action=13, temp=1.0000, N(action)=4
+13:58:23.285 [INFO] Nuoc thu 6 (Greedy): chon action=19, diem 1095.7
+13:58:38.631 [INFO] Nuoc thu 7 (alphaZero): chon action=98, temp=1.0000, N(action)=4
+13:58:38.634 [INFO] Nuoc thu 8 (Greedy): chon action=20, diem 10006.6
+13:58:53.940 [INFO] Nuoc thu 9 (alphaZero): chon action=121, temp=1.0000, N(action)=4
+13:58:53.942 [INFO] Nuoc thu 10 (Greedy): chon action=16, diem 100006.6
+13:58:53.942 [INFO] ========== VAN (vs Greedy) KET THUC: nguoi thang la player 2 (AlphaZero la player 1), tong 10 nuoc ==========
+13:58:54.281 [INFO] ========== BAT DAU VAN TU CHOI VOI GREEDY (board 15x15), AlphaZero la player 1 ==========
+13:59:09.759 [INFO] Nuoc thu 1 (alphaZero): chon action=194, temp=1.0000, N(action)=4
+13:59:09.761 [INFO] Nuoc thu 2 (Greedy): chon action=209, diem 96.7
+13:59:25.513 [INFO] Nuoc thu 3 (alphaZero): chon action=8, temp=1.0000, N(action)=6
+13:59:25.515 [INFO] Nuoc thu 4 (Greedy): chon action=7, diem 96.7
+13:59:41.453 [INFO] Nuoc thu 5 (alphaZero): chon action=68, temp=1.0000, N(action)=4
+13:59:41.455 [INFO] Nuoc thu 6 (Greedy): chon action=52, diem 96.7
+13:59:56.906 [INFO] Nuoc thu 7 (alphaZero): chon action=214, temp=1.0000, N(action)=8
+13:59:56.908 [INFO] Nuoc thu 8 (Greedy): chon action=67, diem 195.7
+14:00:12.941 [INFO] Nuoc thu 9 (alphaZero): chon action=152, temp=1.0000, N(action)=12
+14:00:12.943 [INFO] Nuoc thu 10 (Greedy): chon action=82, diem 1095.7
+14:00:28.239 [INFO] Nuoc thu 11 (alphaZero): chon action=21, temp=1.0000, N(action)=6
+14:00:28.241 [INFO] Nuoc thu 12 (Greedy): chon action=37, diem 10095.7
+14:00:43.947 [INFO] Nuoc thu 13 (alphaZero): chon action=174, temp=1.0000, N(action)=4
+14:00:43.949 [INFO] Nuoc thu 14 (Greedy): chon action=22, diem 100102.9
+14:00:43.949 [INFO] ========== VAN (vs Greedy) KET THUC: nguoi thang la player 2 (AlphaZero la player 1), tong 14 nuoc ==========
+14:00:44.348 [INFO] ========== BAT DAU VAN TU CHOI VOI GREEDY (board 15x15), AlphaZero la player 1 ==========
+14:01:00.088 [INFO] Nuoc thu 1 (alphaZero): chon action=222, temp=1.0000, N(action)=6
+14:01:00.091 [INFO] Nuoc thu 2 (Greedy): chon action=221, diem 96.7
+14:01:15.605 [INFO] Nuoc thu 3 (alphaZero): chon action=58, temp=1.0000, N(action)=4
+14:01:15.607 [INFO] Nuoc thu 4 (Greedy): chon action=57, diem 96.7
+14:01:31.034 [INFO] Nuoc thu 5 (alphaZero): chon action=201, temp=1.0000, N(action)=4
+14:01:31.037 [INFO] Nuoc thu 6 (Greedy): chon action=42, diem 195.7
+14:01:46.601 [INFO] Nuoc thu 7 (alphaZero): chon action=92, temp=1.0000, N(action)=10
+14:01:46.605 [INFO] Nuoc thu 8 (Greedy): chon action=72, diem 1095.7
+14:02:01.961 [INFO] Nuoc thu 9 (alphaZero): chon action=85, temp=1.0000, N(action)=4
+14:02:01.964 [INFO] Nuoc thu 10 (Greedy): chon action=87, diem 10006.6
+14:02:17.705 [INFO] Nuoc thu 11 (alphaZero): chon action=66, temp=1.0000, N(action)=2
+14:02:17.707 [INFO] Nuoc thu 12 (Greedy): chon action=102, diem 100006.6
+14:02:17.707 [INFO] ========== VAN (vs Greedy) KET THUC: nguoi thang la player 2 (AlphaZero la player 1), tong 12 nuoc ==========
+14:02:17.995 [INFO] ========== BAT DAU VAN TU CHOI VOI GREEDY (board 15x15), AlphaZero la player 2 ==========
+14:02:17.995 [INFO] Nuoc thu 1 (Greedy): chon action=112 (khai cuoc, o trung tam)
+14:02:33.419 [INFO] Nuoc thu 2 (alphaZero): chon action=122, temp=1.0000, N(action)=6
+14:02:33.423 [INFO] Nuoc thu 3 (Greedy): chon action=111, diem 106.6
+14:02:49.376 [INFO] Nuoc thu 4 (alphaZero): chon action=172, temp=1.0000, N(action)=4
+14:02:49.378 [INFO] Nuoc thu 5 (Greedy): chon action=113, diem 1006.6
+14:03:05.210 [INFO] Nuoc thu 6 (alphaZero): chon action=90, temp=1.0000, N(action)=4
+14:03:05.213 [INFO] Nuoc thu 7 (Greedy): chon action=114, diem 10006.6
+14:03:20.845 [INFO] Nuoc thu 8 (alphaZero): chon action=44, temp=1.0000, N(action)=10
+14:03:20.848 [INFO] Nuoc thu 9 (Greedy): chon action=110, diem 100006.6
+14:03:20.849 [INFO] ========== VAN (vs Greedy) KET THUC: nguoi thang la player 1 (AlphaZero la player 2), tong 9 nuoc ==========
+14:03:21.182 [INFO] ========== BAT DAU VAN TU CHOI VOI GREEDY (board 15x15), AlphaZero la player 1 ==========
+14:03:36.854 [INFO] Nuoc thu 1 (alphaZero): chon action=133, temp=1.0000, N(action)=14
+14:03:36.870 [INFO] Nuoc thu 2 (Greedy): chon action=147, diem 96.7
+14:03:52.109 [INFO] Nuoc thu 3 (alphaZero): chon action=155, temp=1.0000, N(action)=4
+14:03:52.111 [INFO] Nuoc thu 4 (Greedy): chon action=132, diem 195.7
+14:04:07.874 [INFO] Nuoc thu 5 (alphaZero): chon action=202, temp=1.0000, N(action)=4
+14:04:07.876 [INFO] Nuoc thu 6 (Greedy): chon action=117, diem 1095.7
+14:04:23.524 [INFO] Nuoc thu 7 (alphaZero): chon action=76, temp=1.0000, N(action)=8
+14:04:23.527 [INFO] Nuoc thu 8 (Greedy): chon action=102, diem 10006.6
+14:04:39.116 [INFO] Nuoc thu 9 (alphaZero): chon action=66, temp=1.0000, N(action)=10
+14:04:39.118 [INFO] Nuoc thu 10 (Greedy): chon action=87, diem 100006.6
+14:04:39.119 [INFO] ========== VAN (vs Greedy) KET THUC: nguoi thang la player 2 (AlphaZero la player 1), tong 10 nuoc ==========
+14:04:39.399 [INFO] ========== BAT DAU VAN TU CHOI VOI GREEDY (board 15x15), AlphaZero la player 1 ==========
+14:04:55.086 [INFO] Nuoc thu 1 (alphaZero): chon action=168, temp=1.0000, N(action)=4
+14:04:55.088 [INFO] Nuoc thu 2 (Greedy): chon action=183, diem 96.7
+14:05:10.873 [INFO] Nuoc thu 3 (alphaZero): chon action=150, temp=1.0000, N(action)=4
+14:05:10.875 [INFO] Nuoc thu 4 (Greedy): chon action=182, diem 195.7
+14:05:26.666 [INFO] Nuoc thu 5 (alphaZero): chon action=80, temp=1.0000, N(action)=4
+14:05:26.669 [INFO] Nuoc thu 6 (Greedy): chon action=184, diem 1095.7
+14:05:42.079 [INFO] Nuoc thu 7 (alphaZero): chon action=190, temp=1.0000, N(action)=4
+14:05:42.082 [INFO] Nuoc thu 8 (Greedy): chon action=185, diem 10006.6
+14:05:57.539 [INFO] Nuoc thu 9 (alphaZero): chon action=38, temp=1.0000, N(action)=6
+14:05:57.541 [INFO] Nuoc thu 10 (Greedy): chon action=186, diem 100006.6
+14:05:57.541 [INFO] ========== VAN (vs Greedy) KET THUC: nguoi thang la player 2 (AlphaZero la player 1), tong 10 nuoc ==========
+14:05:57.847 [INFO] ========== BAT DAU VAN TU CHOI VOI GREEDY (board 15x15), AlphaZero la player 2 ==========
+14:05:57.848 [INFO] Nuoc thu 1 (Greedy): chon action=112 (khai cuoc, o trung tam)
+14:06:13.637 [INFO] Nuoc thu 2 (alphaZero): chon action=147, temp=1.0000, N(action)=4
+14:06:13.639 [INFO] Nuoc thu 3 (Greedy): chon action=97, diem 106.6
+14:06:29.156 [INFO] Nuoc thu 4 (alphaZero): chon action=37, temp=1.0000, N(action)=4
+14:06:29.159 [INFO] Nuoc thu 5 (Greedy): chon action=82, diem 1006.6
+14:06:44.507 [INFO] Nuoc thu 6 (alphaZero): chon action=30, temp=1.0000, N(action)=6
+14:06:44.510 [INFO] Nuoc thu 7 (Greedy): chon action=67, diem 10006.6
+14:06:59.985 [INFO] Nuoc thu 8 (alphaZero): chon action=91, temp=1.0000, N(action)=4
+14:06:59.987 [INFO] Nuoc thu 9 (Greedy): chon action=52, diem 100014.7
+14:06:59.987 [INFO] ========== VAN (vs Greedy) KET THUC: nguoi thang la player 1 (AlphaZero la player 2), tong 9 nuoc ==========
+14:07:00.339 [INFO] ========== BAT DAU VAN TU CHOI VOI GREEDY (board 15x15), AlphaZero la player 2 ==========
+14:07:00.339 [INFO] Nuoc thu 1 (Greedy): chon action=112 (khai cuoc, o trung tam)
+14:07:15.945 [INFO] Nuoc thu 2 (alphaZero): chon action=14, temp=1.0000, N(action)=4
+14:07:15.946 [INFO] Nuoc thu 3 (Greedy): chon action=127, diem 106.6
+14:07:31.518 [INFO] Nuoc thu 4 (alphaZero): chon action=171, temp=1.0000, N(action)=6
+14:07:31.521 [INFO] Nuoc thu 5 (Greedy): chon action=142, diem 1006.6
+14:07:46.976 [INFO] Nuoc thu 6 (alphaZero): chon action=179, temp=1.0000, N(action)=4
+14:07:46.978 [INFO] Nuoc thu 7 (Greedy): chon action=157, diem 10095.7
+14:08:02.406 [INFO] Nuoc thu 8 (alphaZero): chon action=128, temp=1.0000, N(action)=4
+14:08:02.408 [INFO] Nuoc thu 9 (Greedy): chon action=172, diem 100095.7
+14:08:02.408 [INFO] ========== VAN (vs Greedy) KET THUC: nguoi thang la player 1 (AlphaZero la player 2), tong 9 nuoc ==========
+14:08:02.717 [INFO] ========== BAT DAU VAN TU CHOI VOI GREEDY (board 15x15), AlphaZero la player 1 ==========
+14:08:18.530 [INFO] Nuoc thu 1 (alphaZero): chon action=209, temp=1.0000, N(action)=6
+14:08:18.532 [INFO] Nuoc thu 2 (Greedy): chon action=194, diem 96.7
+14:08:34.228 [INFO] Nuoc thu 3 (alphaZero): chon action=8, temp=1.0000, N(action)=4
+14:08:34.230 [INFO] Nuoc thu 4 (Greedy): chon action=9, diem 96.7
+14:08:50.244 [INFO] Nuoc thu 5 (alphaZero): chon action=77, temp=1.0000, N(action)=4
+14:08:50.245 [INFO] Nuoc thu 6 (Greedy): chon action=76, diem 96.7
+14:09:05.955 [INFO] Nuoc thu 7 (alphaZero): chon action=51, temp=1.0000, N(action)=2
+14:09:05.958 [INFO] Nuoc thu 8 (Greedy): chon action=61, diem 195.7
+14:09:21.497 [INFO] Nuoc thu 9 (alphaZero): chon action=133, temp=1.0000, N(action)=10
+14:09:21.499 [INFO] Nuoc thu 10 (Greedy): chon action=91, diem 1095.7
+14:09:36.637 [INFO] Nuoc thu 11 (alphaZero): chon action=208, temp=1.0000, N(action)=6
+14:09:36.639 [INFO] Nuoc thu 12 (Greedy): chon action=106, diem 10006.6
+14:09:52.341 [INFO] Nuoc thu 13 (alphaZero): chon action=102, temp=1.0000, N(action)=10
+14:09:52.343 [INFO] Nuoc thu 14 (Greedy): chon action=46, diem 100006.6
+14:09:52.343 [INFO] ========== VAN (vs Greedy) KET THUC: nguoi thang la player 2 (AlphaZero la player 1), tong 14 nuoc ==========
+14:09:52.690 [INFO] ========== BAT DAU VAN TU CHOI VOI GREEDY (board 15x15), AlphaZero la player 1 ==========
+14:10:08.228 [INFO] Nuoc thu 1 (alphaZero): chon action=32, temp=1.0000, N(action)=20
+14:10:08.236 [INFO] Nuoc thu 2 (Greedy): chon action=47, diem 96.7
+14:10:23.631 [INFO] Nuoc thu 3 (alphaZero): chon action=66, temp=1.0000, N(action)=4
+14:10:23.633 [INFO] Nuoc thu 4 (Greedy): chon action=48, diem 195.7
+14:10:39.636 [INFO] Nuoc thu 5 (alphaZero): chon action=103, temp=1.0000, N(action)=4
+14:10:39.639 [INFO] Nuoc thu 6 (Greedy): chon action=46, diem 1095.7
+14:10:55.561 [INFO] Nuoc thu 7 (alphaZero): chon action=144, temp=1.0000, N(action)=6
+14:10:55.563 [INFO] Nuoc thu 8 (Greedy): chon action=49, diem 10006.6
+14:11:10.963 [INFO] Nuoc thu 9 (alphaZero): chon action=168, temp=1.0000, N(action)=4
+14:11:10.965 [INFO] Nuoc thu 10 (Greedy): chon action=50, diem 100095.7
+14:11:10.965 [INFO] ========== VAN (vs Greedy) KET THUC: nguoi thang la player 2 (AlphaZero la player 1), tong 10 nuoc ==========
+14:11:11.351 [INFO] ========== BAT DAU VAN TU CHOI VOI GREEDY (board 15x15), AlphaZero la player 1 ==========
+14:11:27.172 [INFO] Nuoc thu 1 (alphaZero): chon action=8, temp=1.0000, N(action)=4
+14:11:27.174 [INFO] Nuoc thu 2 (Greedy): chon action=9, diem 96.7
+14:11:42.723 [INFO] Nuoc thu 3 (alphaZero): chon action=211, temp=1.0000, N(action)=4
+14:11:42.730 [INFO] Nuoc thu 4 (Greedy): chon action=212, diem 96.7
+14:11:58.611 [INFO] Nuoc thu 5 (alphaZero): chon action=172, temp=1.0000, N(action)=4
+14:11:58.614 [INFO] Nuoc thu 6 (Greedy): chon action=171, diem 96.7
+14:12:13.866 [INFO] Nuoc thu 7 (alphaZero): chon action=99, temp=1.0000, N(action)=4
+14:12:13.867 [INFO] Nuoc thu 8 (Greedy): chon action=157, diem 195.7
+14:12:29.281 [INFO] Nuoc thu 9 (alphaZero): chon action=145, temp=1.0000, N(action)=10
+14:12:29.282 [INFO] Nuoc thu 10 (Greedy): chon action=185, diem 1006.6
+14:12:45.409 [INFO] Nuoc thu 11 (alphaZero): chon action=142, temp=1.0000, N(action)=8
+14:12:45.412 [INFO] Nuoc thu 12 (Greedy): chon action=143, diem 10095.7
+14:13:00.492 [INFO] Nuoc thu 13 (alphaZero): chon action=207, temp=1.0000, N(action)=4
+14:13:00.494 [INFO] Nuoc thu 14 (Greedy): chon action=129, diem 100095.7
+14:13:00.495 [INFO] ========== VAN (vs Greedy) KET THUC: nguoi thang la player 2 (AlphaZero la player 1), tong 14 nuoc ==========
+14:13:00.847 [INFO] ========== BAT DAU VAN TU CHOI VOI GREEDY (board 15x15), AlphaZero la player 1 ==========
+14:13:16.598 [INFO] Nuoc thu 1 (alphaZero): chon action=64, temp=1.0000, N(action)=4
+14:13:16.600 [INFO] Nuoc thu 2 (Greedy): chon action=80, diem 96.7
+14:13:31.872 [INFO] Nuoc thu 3 (alphaZero): chon action=8, temp=1.0000, N(action)=4
+14:13:31.875 [INFO] Nuoc thu 4 (Greedy): chon action=79, diem 195.7
+14:13:47.268 [INFO] Nuoc thu 5 (alphaZero): chon action=202, temp=1.0000, N(action)=6
+14:13:47.270 [INFO] Nuoc thu 6 (Greedy): chon action=78, diem 1095.7
+14:14:02.618 [INFO] Nuoc thu 7 (alphaZero): chon action=168, temp=1.0000, N(action)=4
+14:14:02.620 [INFO] Nuoc thu 8 (Greedy): chon action=81, diem 10006.6
+14:14:18.211 [INFO] Nuoc thu 9 (alphaZero): chon action=170, temp=1.0000, N(action)=4
+14:14:18.219 [INFO] Nuoc thu 10 (Greedy): chon action=82, diem 100006.6
+14:14:18.220 [INFO] ========== VAN (vs Greedy) KET THUC: nguoi thang la player 2 (AlphaZero la player 1), tong 10 nuoc ==========
+14:14:18.533 [INFO] ========== BAT DAU VAN TU CHOI VOI GREEDY (board 15x15), AlphaZero la player 1 ==========
+14:14:34.051 [INFO] Nuoc thu 1 (alphaZero): chon action=49, temp=1.0000, N(action)=2
+14:14:34.055 [INFO] Nuoc thu 2 (Greedy): chon action=48, diem 96.7
+14:14:49.540 [INFO] Nuoc thu 3 (alphaZero): chon action=96, temp=1.0000, N(action)=4
+14:14:49.542 [INFO] Nuoc thu 4 (Greedy): chon action=33, diem 195.7
+14:15:05.156 [INFO] Nuoc thu 5 (alphaZero): chon action=122, temp=1.0000, N(action)=4
+14:15:05.159 [INFO] Nuoc thu 6 (Greedy): chon action=63, diem 1095.7
+14:15:21.021 [INFO] Nuoc thu 7 (alphaZero): chon action=182, temp=1.0000, N(action)=4
+14:15:21.024 [INFO] Nuoc thu 8 (Greedy): chon action=18, diem 10006.6
+14:15:36.457 [INFO] Nuoc thu 9 (alphaZero): chon action=93, temp=1.0000, N(action)=6
+14:15:36.460 [INFO] Nuoc thu 10 (Greedy): chon action=78, diem 100014.7
+14:15:36.460 [INFO] ========== VAN (vs Greedy) KET THUC: nguoi thang la player 2 (AlphaZero la player 1), tong 10 nuoc ==========
+14:15:36.812 [INFO] ========== BAT DAU VAN TU CHOI VOI GREEDY (board 15x15), AlphaZero la player 2 ==========
+14:15:36.812 [INFO] Nuoc thu 1 (Greedy): chon action=112 (khai cuoc, o trung tam)
+14:15:52.321 [INFO] Nuoc thu 2 (alphaZero): chon action=74, temp=1.0000, N(action)=4
+14:15:52.323 [INFO] Nuoc thu 3 (Greedy): chon action=111, diem 106.6
+14:16:07.789 [INFO] Nuoc thu 4 (alphaZero): chon action=131, temp=1.0000, N(action)=6
+14:16:07.790 [INFO] Nuoc thu 5 (Greedy): chon action=110, diem 1006.6
+14:16:23.208 [INFO] Nuoc thu 6 (alphaZero): chon action=142, temp=1.0000, N(action)=4
+14:16:23.210 [INFO] Nuoc thu 7 (Greedy): chon action=109, diem 10006.6
+14:16:38.855 [INFO] Nuoc thu 8 (alphaZero): chon action=116, temp=1.0000, N(action)=12
+14:16:38.863 [INFO] Nuoc thu 9 (Greedy): chon action=108, diem 100006.6
+14:16:38.864 [INFO] ========== VAN (vs Greedy) KET THUC: nguoi thang la player 1 (AlphaZero la player 2), tong 9 nuoc ==========
+14:16:39.201 [INFO] ========== BAT DAU VAN TU CHOI VOI GREEDY (board 15x15), AlphaZero la player 1 ==========
+14:16:55.029 [INFO] Nuoc thu 1 (alphaZero): chon action=111, temp=1.0000, N(action)=4
+14:16:55.032 [INFO] Nuoc thu 2 (Greedy): chon action=112, diem 96.7
+14:17:10.183 [INFO] Nuoc thu 3 (alphaZero): chon action=68, temp=1.0000, N(action)=4
+14:17:10.185 [INFO] Nuoc thu 4 (Greedy): chon action=126, diem 195.7
+14:17:25.734 [INFO] Nuoc thu 5 (alphaZero): chon action=113, temp=1.0000, N(action)=4
+14:17:25.737 [INFO] Nuoc thu 6 (Greedy): chon action=98, diem 1095.7
+14:17:41.172 [INFO] Nuoc thu 7 (alphaZero): chon action=19, temp=1.0000, N(action)=4
+14:17:41.175 [INFO] Nuoc thu 8 (Greedy): chon action=84, diem 10095.7
+14:17:56.489 [INFO] Nuoc thu 9 (alphaZero): chon action=147, temp=1.0000, N(action)=4
+14:17:56.491 [INFO] Nuoc thu 10 (Greedy): chon action=70, diem 100006.6
+14:17:56.491 [INFO] ========== VAN (vs Greedy) KET THUC: nguoi thang la player 2 (AlphaZero la player 1), tong 10 nuoc ==========
