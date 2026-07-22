@@ -551,7 +551,7 @@ class TrainPipeline():
                         self.save_evaluation_log(
                                 checkpoint=i+1,
                                 n_games=100,
-                                opponent="AlphaZero O",
+                                opponent="Greedy",
                                 win_cnt=win_cnt,
                                 win_ratio=win_ratio,
                                 best_updated=best_updated,
