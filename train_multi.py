@@ -22,7 +22,7 @@ from greedy_player import GreedyPlayer
 from mcts_alphaZero import MCTSPlayer
 from policy_value_net_pytorch import PolicyValueNet
 from logging_setup import setup_logging, get_logger, setup_worker_logging
-from openpyxl import Workbook, load_workbook
+import csv
 import datetime
 # QUAN TRONG: KHONG goi setup_logging() ngay o day nua.
 #
@@ -42,6 +42,34 @@ import datetime
 logger = get_logger()
 
 
+def _append_game_summary_csv(csv_path, pid, winner, az_id, n_moves, elapsed):
+    '''
+    Ghi 1 dong ket qua van vao file CSV DUNG CHUNG cho tat ca worker.
+
+    Vi sao an toan khi NHIEU tien trinh cung ghi vao 1 file:
+      - Moi lan goi TU MO file voi mode 'a' (append) roi dong lai ngay,
+        khong giu file handle mo xuyen suot qua trinh worker chay.
+      - Tren Linux, open(..., 'a') dat co O_APPEND: moi lan write() se
+        duoc kernel dam bao ghi vao CUOI file mot cach nguyen tu (atomic)
+        - vi day chi la 1 dong text ngan (duoi vai tram byte, nam gon
+          trong 1 lan syscall write()), nen cac dong cua nhieu worker
+          KHONG bi ghi de/xen giua nhau, moi dong luon tron ven.
+      - Header (ten cot) da duoc TIEN TRINH CHINH tao san 1 LAN DUY NHAT
+        truoc khi cac worker bat dau chay (xem init_csv_logs), nen worker
+        khong bao gio phai tranh nhau tao file/header.
+    '''
+    with open(csv_path, 'a', newline='', encoding='utf-8') as f:
+        writer = csv.writer(f)
+        writer.writerow([
+            datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            pid,
+            winner,
+            'D' if winner == -1 else 'W' if winner == az_id else 'L',
+            n_moves,
+            round(elapsed, 1)
+        ])
+
+
 def _self_play_worker(args):
     '''
     Ham nay chay o MOT TIEN TRINH (process) rieng, doc lap voi tien trinh chinh.
@@ -56,7 +84,7 @@ def _self_play_worker(args):
     '''
     (tmp_model_path, board_width, board_height, n_in_row,
      resnet_block, n_playout, c_puct, use_cuda, seed,
-     threads_per_worker) = args
+     threads_per_worker, games_summary_csv) = args
 
     # === QUAN TRONG: gioi han so luong CPU thread cua tien trinh nay ===
     # Mac dinh, PyTorch tu dat so thread = TOAN BO so nhan CPU cua may,
@@ -109,18 +137,27 @@ def _self_play_worker(args):
                               is_selfplay=True)
 
     # winner, play_data = game.start_self_play(mcts_player, is_shown=False)
-    winner, play_data = game.start_self_play_with_greedy(mcts_player, is_shown=False)
+    winner, play_data, total_moves, az_id = game.start_self_play_with_greedy(mcts_player, is_shown=False)
     # play_data la generator/zip -> phai ep ve list truoc khi gui qua pipe
     # ve tien trinh cha (pickle khong the truyen thang generator/zip object)
     play_data = list(play_data)
 
-    # 1 dong tom tat gon gang duy nhat in ra console chinh cho moi van
-    # (chi tiet day du van con trong logs/selfplay_workers/worker_pid....log)
+    # In ngan gon ra console de theo doi realtime (co the xen ke giua cac
+    # worker chay song song, chi de "biet dang chay", KHONG dung de xem lai).
     elapsed = time.time() - t0
     print("[worker pid={}] van xong: nguoi thang={}, so nuoc={}, thoi gian={:.1f}s".format(
-        os.getpid(), winner, len(play_data), elapsed))
+        os.getpid(), winner, total_moves, elapsed))
 
-    return winner, play_data
+    # Luu lai LAU DAI vao 1 file CSV chung cho TAT CA worker (khong con
+    # ghi qua logger.info vao file rieng cua tung worker nua - truoc day
+    # moi worker 1 file khien muon xem tong quan tat ca cac van phai mo
+    # rat nhieu file khac nhau). Gio chi can mo DUY NHAT 1 file CSV nay
+    # (vd bang Excel/pandas) la thay toan bo ket qua cac van, sap theo
+    # thoi gian, de loc/sap xep/ve bieu do.
+    _append_game_summary_csv(games_summary_csv, os.getpid(), winner, az_id,
+                             total_moves, elapsed)
+
+    return winner, play_data, total_moves
 
 class TrainPipeline():
     def __init__(self, init_model=None,transfer_model=None):
@@ -145,7 +182,7 @@ class TrainPipeline():
         # Tren may RAM nho (vd 16GB), can giam han xuong, khong de mac dinh
         # 1,000,000 nhu ban goc (ban goc vien de danh cho may RAM lon hon nhieu).
         self.buffer_size = 100000 # memory size (giam tu 1,000,000 -> phu hop may RAM ~16GB)
-        self.batch_size = 2048  # mini-batch size for training
+        self.batch_size = 8  # mini-batch size for training
         self.data_buffer = deque(maxlen=self.buffer_size)
         # so tien trinh (process) chay song song de tu choi.
         # KHONG chi dua vao so nhan CPU (mp.cpu_count()) ma con phai dua vao
@@ -176,20 +213,26 @@ class TrainPipeline():
         # 6 worker cung load resnet-19 (moi ban ~vai tram MB) nen van con
         # nhieu du dia trong 8GB VRAM. Neu gap loi "CUDA out of memory",
         # giam self.num_selfplay_workers xuong hoac dat lai False.
-        self.selfplay_worker_cuda = True
+        self.selfplay_worker_cuda = False
         # play n games for each network training
         # nen dat >= num_selfplay_workers de tan dung het cac tien trinh song song
-        self.play_batch_size = 200
+        self.play_batch_size = 2
         self.check_freq = 1
-        self.game_batch_num = 5 # total game to train
+        self.game_batch_num = 2 # total game to train
         self.best_win_ratio = 0.0
+        # dem TONG so train step tu dau qua trinh train toi gio, TANG LIEN
+        # TUC qua tat ca cac lan goi policy_update() (khac voi bien "i" cuc
+        # bo ben trong policy_update, reset ve 0 moi lan goi) -> dung lam
+        # cot "Global Step" trong train_steps_log_*.csv de truc X lien tuc
+        # khi ve bieu do, khong bi "nhay lui ve 0" giua cac selfplay batch.
+        self.global_train_step = 0
         # num of simulations used for the pure mcts, which is used as
         # the opponent to evaluate the trained policy
         self.pure_mcts_playout_num = 100
-        if (init_model is not None) and os.path.exists(init_model+'.index'):
+        if (init_model is not None) and os.path.exists(init_model):
             # start training from an initial policy-value net
             self.policy_value_net = PolicyValueNet(self.board_width,self.board_height,block=self.resnet_block,init_model=init_model,cuda=True)
-        elif (transfer_model is not None) and os.path.exists(transfer_model+'.index'):
+        elif (transfer_model is not None) and os.path.exists(transfer_model):
             # start training from a pre-trained policy-value net
             self.policy_value_net = PolicyValueNet(self.board_width,self.board_height,block=self.resnet_block,transfer_model=transfer_model,cuda=True)
         else:
@@ -202,77 +245,137 @@ class TrainPipeline():
                                        c_puct=self.c_puct,
                                        n_playout=self.n_playout,
                                        is_selfplay=True)
-    def init_excel_logs(self):
+    def init_csv_logs(self):
+        '''
+        Khoi tao file CSV cho training log va evaluation log.
+
+        Vi sao doi tu .xlsx (openpyxl) sang .csv:
+          - openpyxl.load_workbook() + wb.save() phai DOC LAI TOAN BO file
+            roi GHI LAI TOAN BO file MOI LAN chi de them 1 dong. File cang
+            lon (train cang lau) thi moi lan ghi cang cham -> tich luy lai
+            thanh mot phan dang ke trong tong thoi gian train.
+          - Ghi CSV bang cach mo file voi mode 'a' (append) chi ghi THEM
+            1 dong moi lan, khong dong cham gi den phan da ghi truoc do
+            -> chi phi moi lan ghi la hang so (O(1)), khong phu thuoc file
+            da lon bao nhieu, du train bao lau van nhanh nhu nhau.
+          - CSV con de mo lai bang Excel/LibreOffice binh thuong (Excel mo
+            .csv tot), hoac doc truc tiep bang pandas.read_csv() de ve
+            bieu do loss/win_rate ma khong can cai them thu vien openpyxl.
+        '''
+        ts = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+        if not os.path.exists('csv_logs'):
+            os.makedirs('csv_logs')
 
         # ---------- Training log ----------
-        ts = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-        self.train_excel = "excel/training_log_{}.xlsx".format(ts) #"training_log.xlsx"
-
-        if not os.path.exists(self.train_excel):
-            wb = Workbook()
-            ws = wb.active
-            ws.title = "Training"
-
-            ws.append([
-                "Batch",
-                "Episode Length",
-                "Replay Buffer",
-                "Loss",
-                "Entropy",
-                "Collect Time(s)",
-                "Train Time(s)",
-                "Elapsed Time(h)"
-            ])
-
-            wb.save(self.train_excel)
+        self.train_csv = "csv_logs/training_log_{}.csv".format(ts)
+        if not os.path.exists(self.train_csv):
+            with open(self.train_csv, 'w', newline='', encoding='utf-8') as f:
+                writer = csv.writer(f)
+                writer.writerow([
+                    "Iteration",
+                    "Replay Buffer",
+                    "Loss",
+                    "Entropy",
+                    "Collect Time This Batch(s)",
+                    "Train Time This Batch(s)",
+                    "Collect Time Total(s)",
+                    "Train Time Total(s)",
+                    "Elapsed Time(h)"
+                ])
 
         # ---------- Evaluation log ----------
-        self.eval_excel = "excel/evaluation_log_{}.xlsx".format(ts) #"evaluation_log.xlsx"
+        self.eval_csv = "csv_logs/evaluation_log_{}.csv".format(ts)
+        if not os.path.exists(self.eval_csv):
+            with open(self.eval_csv, 'w', newline='', encoding='utf-8') as f:
+                writer = csv.writer(f)
+                writer.writerow([
+                    "Checkpoint",
+                    "Eval Games",
+                    "Opponent",
+                    "AlphaZero Playout",
+                    "Opponent Playout",
+                    "Win",
+                    "Lose",
+                    "Draw",
+                    "Win Rate",
+                    "Best Win Rate",
+                    "Best Updated",
+                    "Evaluation Time(s)"
+                ])
 
-        if not os.path.exists(self.eval_excel):
-            wb = Workbook()
-            ws = wb.active
-            ws.title = "Evaluation"
+        # ---------- Games summary log (self-play workers) ----------
+        # 1 file DUNG CHUNG cho tat ca worker ghi ket qua tung van vao,
+        # thay cho truoc day moi worker ghi ra 1 file rieng
+        # (logs/selfplay_workers/worker_pid....log) rat kho xem tong quan.
+        # Tao 1 LAN DUY NHAT o day (tien trinh chinh, TRUOC khi worker
+        # chay) de tranh cac worker tranh nhau tao file/ghi header.
+        self.games_summary_csv = "csv_logs/games_summary_{}.csv".format(ts)
+        if not os.path.exists(self.games_summary_csv):
+            with open(self.games_summary_csv, 'w', newline='', encoding='utf-8') as f:
+                writer = csv.writer(f)
+                writer.writerow([
+                    "Timestamp",
+                    "Worker PID",
+                    "Winner",
+                    "Result (AlphaZero - Opponent)",
+                    "So nuoc di",
+                    "Thoi gian (s)"
+                ])
 
-            ws.append([
-                "Checkpoint",
-                "Eval Games",
-                "Opponent",
-                "AlphaZero Playout",
-                "Opponent Playout",
-                "Win",
-                "Lose",
-                "Draw",
-                "Win Rate",
-                "Best Win Rate",
-                "Best Updated",
-                "Evaluation Time(s)"
-            ])
+        # ---------- Train steps log (MOI buoc train, khong chi 1/10) ----------
+        # training_log_*.csv (o tren) chi ghi 1 dong MOI LAN policy_update()
+        # duoc goi (tuc 1 dong / 1 "self-play batch", = trung binh cua loss/
+        # entropy o buoc train CUOI CUNG trong lan goi do). Con logger.info
+        # trong policy_update() chi in ra man hinh/log text 1/10 so buoc de
+        # do roi mat, KHONG luu duoc day du.
+        # File nay luu TAT CA cac buoc train (moi mini-batch) vao 1 CSV
+        # rieng, day du kl/loss/entropy/explained_var qua tung buoc, phuc vu
+        # ve bieu do hoi tu chi tiet hon (vd phat hien loss dao/nhieu giua
+        # cac buoc trong CUNG 1 self-play batch, thu ma training_log khong
+        # thay duoc vi no chi luu 1 diem/batch).
+        self.train_steps_csv = "csv_logs/train_steps_log_{}.csv".format(ts)
+        if not os.path.exists(self.train_steps_csv):
+            with open(self.train_steps_csv, 'w', newline='', encoding='utf-8') as f:
+                writer = csv.writer(f)
+                writer.writerow([
+                    "Global Step",
+                    "Iteration",
+                    "Train Step",
+                    "Batch Length",
+                    "KL",
+                    "Loss",
+                    "Entropy",
+                    "Explained Var Old",
+                    "Explained Var New"
+                ])
 
-            wb.save(self.eval_excel)
     def save_training_log(self,
                       batch,
                       loss,
                       entropy,
                       collect_time,
                       train_time,
+                      collect_time_total,
+                      train_time_total,
                       elapsed_time):
+        # mode 'a' = append: chi ghi THEM 1 dong vao cuoi file, khong doc
+        # lai file cu -> nhanh, khong phu thuoc file da lon co nao.
+        # collect_time/train_time: thoi gian RIENG cua batch nay (khong cong don)
+        # collect_time_total/train_time_total: TONG cong don tu dau train toi gio
+        with open(self.train_csv, 'a', newline='', encoding='utf-8') as f:
+            writer = csv.writer(f)
+            writer.writerow([
+                batch,
+                len(self.data_buffer),
+                float(loss),
+                float(entropy),
+                round(collect_time, 2),
+                round(train_time, 2),
+                round(collect_time_total, 2),
+                round(train_time_total, 2),
+                round(elapsed_time / 3600, 3)
+            ])
 
-        wb = load_workbook(self.train_excel)
-        ws = wb["Training"]
-
-        ws.append([
-            batch,
-            self.episode_len,
-            len(self.data_buffer),
-            float(loss),
-            float(entropy),
-            round(collect_time,2),
-            round(train_time,2),
-            round(elapsed_time/3600,3)
-        ])
-
-        wb.save(self.train_excel)
     def save_evaluation_log(self,
                         checkpoint,
                         n_games,
@@ -281,26 +384,22 @@ class TrainPipeline():
                         win_ratio,
                         best_updated,
                         eval_time):
-
-        wb = load_workbook(self.eval_excel)
-        ws = wb["Evaluation"]
-
-        ws.append([
-            checkpoint,
-            n_games,
-            opponent,
-            self.n_playout,
-            self.pure_mcts_playout_num if opponent=="PureMCTS" else "-",
-            win_cnt[1],
-            win_cnt[2],
-            win_cnt[-1],
-            round(win_ratio,4),
-            round(self.best_win_ratio,4),
-            "Yes" if best_updated else "No",
-            round(eval_time,2)
-        ])
-
-        wb.save(self.eval_excel)
+        with open(self.eval_csv, 'a', newline='', encoding='utf-8') as f:
+            writer = csv.writer(f)
+            writer.writerow([
+                checkpoint,
+                n_games,
+                opponent,
+                self.n_playout,
+                self.pure_mcts_playout_num if opponent == "PureMCTS" else "-",
+                win_cnt[1],
+                win_cnt[2],
+                win_cnt[-1],
+                round(win_ratio, 4),
+                round(self.best_win_ratio, 4),
+                "Yes" if best_updated else "No",
+                round(eval_time, 2)
+            ])
     def get_equi_data(self, play_data):
         '''
         augment the data set by rotation and flipping
@@ -369,7 +468,7 @@ class TrainPipeline():
             (tmp_model_path, self.board_width, self.board_height, self.n_in_row,
              self.resnet_block, self.n_playout, self.c_puct,
              self.selfplay_worker_cuda, random.randint(0, 2 ** 31 - 1),
-             threads_per_worker)
+             threads_per_worker, self.games_summary_csv)
             for _ in range(n_games)
         ]
 
@@ -382,16 +481,19 @@ class TrainPipeline():
 
         # 4) gom ket qua tu tat ca cac van (nhu vong lap cu, chi khac la
         #    du lieu da duoc choi song song thay vi tuan tu)
-        for winner, play_data in results:
+        for winner, play_data, total_moves in results:
             play_data = list(play_data)[:]
-            self.episode_len = len(play_data)
+            self.episode_len = total_moves
             # augment the data
             play_data = self.get_equi_data(play_data)
             self.data_buffer.extend(play_data)
 
-    def policy_update(self):
+    def policy_update(self, selfplay_batch=None):
         '''
         update the policy-value net
+        selfplay_batch: so thu tu cua lan thu du lieu tu-choi hien tai
+                        (dung de ghi vao cot "Selfplay Batch" trong CSV,
+                        giup biet cac train step nay thuoc lan collect nao)
         '''
         # play_data: [(state, mcts_prob, winner_z), ..., ...]
         # train an epoch
@@ -401,41 +503,67 @@ class TrainPipeline():
 
         steps = len(tmp_buffer) // self.batch_size
         print('tmp buffer: {}, steps: {}'.format(len(tmp_buffer), steps))
-        for i in range(steps):
-            batch = tmp_buffer[i*self.batch_size : (i+1)*self.batch_size]
-            state_batch, mcts_probs_batch, winner_batch = zip(*batch)
-            state_batch = np.array(state_batch)
-            mcts_probs_batch = np.array(mcts_probs_batch)
-            winner_batch = np.array(winner_batch)
 
-            old_probs, old_v = self.policy_value_net.policy_value(state_batch=state_batch,
-                                                                  actin_fc=self.policy_value_net.action_fc_test,
-                                                                  evaluation_fc=self.policy_value_net.evaluation_fc2_test)
-            loss, entropy = self.policy_value_net.train_step(state_batch,
-                                                             mcts_probs_batch,
-                                                             winner_batch,
-                                                             self.learn_rate)
-            new_probs, new_v = self.policy_value_net.policy_value(state_batch=state_batch,
-                                                                  actin_fc=self.policy_value_net.action_fc_test,
-                                                                  evaluation_fc=self.policy_value_net.evaluation_fc2_test)
-            kl = np.mean(np.sum(old_probs * (
-                    np.log(old_probs + 1e-10) - np.log(new_probs + 1e-10)),
-                    axis=1)
-            )
+        # Mo file CSV MOT LAN DUY NHAT cho ca vong lap (co the len den hang
+        # nghin buoc/lan goi), roi ghi tung dong vao trong luc train, thay
+        # vi mo/dong file O MOI BUOC (rat cham neu steps lon). Vi day la
+        # tien trinh chinh, khong co tien trinh nao khac ghi vao file nay
+        # cung luc, nen giu file mo xuyen suot vong lap la an toan.
+        with open(self.train_steps_csv, 'a', newline='', encoding='utf-8') as f:
+            step_writer = csv.writer(f)
 
-            explained_var_old = (1 -
-                                 np.var(np.array(winner_batch) - old_v.flatten()) /
-                                 np.var(np.array(winner_batch)))
-            explained_var_new = (1 -
-                                 np.var(np.array(winner_batch) - new_v.flatten()) /
-                                 np.var(np.array(winner_batch)))
+            for i in range(steps):
+                batch = tmp_buffer[i*self.batch_size : (i+1)*self.batch_size]
+                state_batch, mcts_probs_batch, winner_batch = zip(*batch)
+                state_batch = np.array(state_batch)
+                mcts_probs_batch = np.array(mcts_probs_batch)
+                winner_batch = np.array(winner_batch)
 
-            if steps<10 or (i%(steps//10)==0):
-                # print some information, not too much
-                logger.info('batch: %d, length: %d, kl:%.5f, loss:%s, entropy:%s, '
-                            'explained_var_old:%.3f, explained_var_new:%.3f',
-                            i, len(batch), kl, loss, entropy,
-                            explained_var_old, explained_var_new)
+                old_probs, old_v = self.policy_value_net.policy_value(state_batch=state_batch,
+                                                                      actin_fc=self.policy_value_net.action_fc_test,
+                                                                      evaluation_fc=self.policy_value_net.evaluation_fc2_test)
+                loss, entropy = self.policy_value_net.train_step(state_batch,
+                                                                 mcts_probs_batch,
+                                                                 winner_batch,
+                                                                 self.learn_rate)
+                new_probs, new_v = self.policy_value_net.policy_value(state_batch=state_batch,
+                                                                      actin_fc=self.policy_value_net.action_fc_test,
+                                                                      evaluation_fc=self.policy_value_net.evaluation_fc2_test)
+                kl = np.mean(np.sum(old_probs * (
+                        np.log(old_probs + 1e-10) - np.log(new_probs + 1e-10)),
+                        axis=1)
+                )
+
+                explained_var_old = (1 -
+                                     np.var(np.array(winner_batch) - old_v.flatten()) /
+                                     np.var(np.array(winner_batch)))
+                explained_var_new = (1 -
+                                     np.var(np.array(winner_batch) - new_v.flatten()) /
+                                     np.var(np.array(winner_batch)))
+
+                # Ghi MOI buoc train vao CSV (khac voi logger.info ben duoi
+                # chi in 1/10 so buoc ra man hinh de khong tran console).
+                # global_train_step TANG LIEN TUC (khong reset) -> dung
+                # lam truc X khi ve bieu do xuyen suot ca qua trinh train.
+                self.global_train_step += 1
+                step_writer.writerow([
+                    self.global_train_step,
+                    selfplay_batch,
+                    i,
+                    len(batch),
+                    float(kl),
+                    float(loss),
+                    float(entropy),
+                    float(explained_var_old),
+                    float(explained_var_new)
+                ])
+
+                if steps<10 or (i%(steps//10)==0):
+                    # print some information, not too much
+                    logger.info('batch: %d, length: %d, kl:%.5f, loss:%s, entropy:%s, '
+                                'explained_var_old:%.3f, explained_var_new:%.3f',
+                                i, len(batch), kl, loss, entropy,
+                                explained_var_old, explained_var_new)
 
         return loss, entropy
 
@@ -484,7 +612,7 @@ class TrainPipeline():
             os.makedirs('tmp')
         if not os.path.exists('model'):
             os.makedirs('model')
-        self.init_excel_logs()
+        self.init_csv_logs()
 
         # record time for each part
         start_time = time.time()
@@ -497,26 +625,39 @@ class TrainPipeline():
                 # collect self-play data
                 collect_data_start_time = time.time()
                 self.collect_selfplay_data(self.play_batch_size)
-                collect_data_time += time.time()-collect_data_start_time
-                logger.info("===== batch tu choi thu %d, so nuoc di trong van (episode_len)=%d =====",
+                # thoi gian THU DATA RIENG cua batch nay (khong cong don)
+                collect_time_this_batch = time.time() - collect_data_start_time
+                # tong cong don tu dau train toi gio (cong them phan cua batch nay)
+                collect_data_time += collect_time_this_batch
+                logger.info("===== Iteration tu choi thu %d, so nuoc di trong van (episode_len)=%d =====",
                             i+1, self.episode_len)
 
                 if len(self.data_buffer) > self.batch_size:
                     # train collected data
                     train_data_start_time = time.time()
-                    loss, entropy = self.policy_update()
-                    train_data_time += time.time()-train_data_start_time
+                    loss, entropy = self.policy_update(selfplay_batch=i+1)
+                    # thoi gian TRAIN RIENG cua batch nay (khong cong don)
+                    train_time_this_batch = time.time() - train_data_start_time
+                    # tong cong don tu dau train toi gio (cong them phan cua batch nay)
+                    train_data_time += train_time_this_batch
                     self.save_training_log(
                         batch=i+1,
                         loss=loss,
                         entropy=entropy,
-                        collect_time=collect_data_time,
-                        train_time=train_data_time,
+                        collect_time=collect_time_this_batch,
+                        train_time=train_time_this_batch,
+                        collect_time_total=collect_data_time,
+                        train_time_total=train_data_time,
                         elapsed_time=time.time()-start_time
                     )
                     # print some training information
-                    logger.info('thoi gian da chay: %.3f gio', (time.time() - start_time) / 3600)
-                    logger.info('collect_data_time: %.3f h, train_data_time: %.3f h, evaluate_time: %.3f h',
+                    # -- rieng batch nay (KHONG cong don, de biet batch nay
+                    #    that su mat bao lau, khong bi lam mo boi cac batch truoc):
+                    logger.info('[Interation %d] thu data: %.1fs, train: %.1fs (rieng batch nay, khong cong don)',
+                                i+1, collect_time_this_batch, train_time_this_batch)
+                    # -- tong cong don TU DAU train (dung de theo doi tong tien do):
+                    logger.info('thoi gian da chay (tong cong don tu dau): %.3f gio', (time.time() - start_time) / 3600)
+                    logger.info('TONG cong don: collect_data_time=%.3f h, train_data_time=%.3f h, evaluate_time=%.3f h',
                                 collect_data_time / 3600, train_data_time / 3600, evaluate_time / 3600)
 
                 if (i+1) % self.check_freq == 0 :
@@ -531,7 +672,7 @@ class TrainPipeline():
                         # evaluate current model
                         best_updated = False
                         print('Đang đánh giá model với 100 van đánh:')
-                        win_ratio, win_cnt = self.policy_evaluate(n_games=100)
+                        win_ratio, win_cnt = self.policy_evaluate(n_games=1)
                         evaluate_time += time.time()-evaluate_start_time
                         if win_ratio > self.best_win_ratio:
                             # save best model
@@ -570,7 +711,7 @@ if __name__ == '__main__':
     setup_logging(level=logging.INFO, console_level=logging.INFO)
     logger = get_logger()
 
-    # training_pipeline = TrainPipeline(init_model='model/best_policy.model',transfer_model=None)
+    training_pipeline = TrainPipeline(init_model='tmp/current_policy.model.pt',transfer_model=None)
     # training_pipeline = TrainPipeline(init_model=None, transfer_model='transfer_model/best_policy.model')
-    training_pipeline = TrainPipeline()
+    # training_pipeline = TrainPipeline()
     training_pipeline.run()

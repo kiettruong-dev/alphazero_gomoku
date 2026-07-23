@@ -563,4 +563,4 @@ class Game(object):
                         print("Game end. Winner is player:", winner)
                     else:
                         print("Game end. Tie")
-                return winner, zip(states, mcts_probs, winners_z)
+                return winner, zip(states, mcts_probs, winners_z), len(self.board.states), az_id
