@@ -24,6 +24,8 @@ from policy_value_net_pytorch import PolicyValueNet
 from logging_setup import setup_logging, get_logger, setup_worker_logging
 import csv
 import datetime
+import pickle
+import threading
 # QUAN TRONG: KHONG goi setup_logging() ngay o day nua.
 #
 # Ly do: multiprocessing voi start method 'spawn' se IMPORT LAI train.py
@@ -42,7 +44,7 @@ import datetime
 logger = get_logger()
 
 
-def _append_game_summary_csv(csv_path, pid, winner, az_id, n_moves, elapsed):
+def _append_game_summary_csv(csv_path, pid, winner,  n_moves, elapsed):
     '''
     Ghi 1 dong ket qua van vao file CSV DUNG CHUNG cho tat ca worker.
 
@@ -64,7 +66,6 @@ def _append_game_summary_csv(csv_path, pid, winner, az_id, n_moves, elapsed):
             datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
             pid,
             winner,
-            'D' if winner == -1 else 'W' if winner == az_id else 'L',
             n_moves,
             round(elapsed, 1)
         ])
@@ -136,8 +137,8 @@ def _self_play_worker(args):
                               n_playout=n_playout,
                               is_selfplay=True)
 
-    # winner, play_data = game.start_self_play(mcts_player, is_shown=False)
-    winner, play_data, total_moves, az_id = game.start_self_play_with_greedy(mcts_player, is_shown=False)
+    winner, play_data, winner_name = game.start_self_play(mcts_player, is_shown=False)
+    # winner, play_data, total_moves, az_id = game.start_self_play_with_greedy(mcts_player, is_shown=False)
     # play_data la generator/zip -> phai ep ve list truoc khi gui qua pipe
     # ve tien trinh cha (pickle khong the truyen thang generator/zip object)
     play_data = list(play_data)
@@ -146,7 +147,7 @@ def _self_play_worker(args):
     # worker chay song song, chi de "biet dang chay", KHONG dung de xem lai).
     elapsed = time.time() - t0
     print("[worker pid={}] van xong: nguoi thang={}, so nuoc={}, thoi gian={:.1f}s".format(
-        os.getpid(), winner, total_moves, elapsed))
+        os.getpid(), winner_name, len(play_data), elapsed))
 
     # Luu lai LAU DAI vao 1 file CSV chung cho TAT CA worker (khong con
     # ghi qua logger.info vao file rieng cua tung worker nua - truoc day
@@ -154,10 +155,10 @@ def _self_play_worker(args):
     # rat nhieu file khac nhau). Gio chi can mo DUY NHAT 1 file CSV nay
     # (vd bang Excel/pandas) la thay toan bo ket qua cac van, sap theo
     # thoi gian, de loc/sap xep/ve bieu do.
-    _append_game_summary_csv(games_summary_csv, os.getpid(), winner, az_id,
-                             total_moves, elapsed)
+    _append_game_summary_csv(games_summary_csv, os.getpid(), winner_name,
+                             len(play_data), elapsed)
 
-    return winner, play_data, total_moves
+    return winner, play_data
 
 class TrainPipeline():
     def __init__(self, init_model=None,transfer_model=None):
@@ -184,6 +185,7 @@ class TrainPipeline():
         self.buffer_size = 100000 # memory size (giam tu 1,000,000 -> phu hop may RAM ~16GB)
         self.batch_size = 8  # mini-batch size for training
         self.data_buffer = deque(maxlen=self.buffer_size)
+        self._buffer_save_thread = None
         # so tien trinh (process) chay song song de tu choi.
         # KHONG chi dua vao so nhan CPU (mp.cpu_count()) ma con phai dua vao
         # RAM con trong: moi worker tu load 1 ban resnet-19 rieng + cay MCTS
@@ -216,9 +218,9 @@ class TrainPipeline():
         self.selfplay_worker_cuda = False
         # play n games for each network training
         # nen dat >= num_selfplay_workers de tan dung het cac tien trinh song song
-        self.play_batch_size = 2
+        self.play_batch_size = 1
         self.check_freq = 1
-        self.game_batch_num = 2 # total game to train
+        self.game_batch_num = 1 # total game to train
         self.best_win_ratio = 0.0
         # dem TONG so train step tu dau qua trinh train toi gio, TANG LIEN
         # TUC qua tat ca cac lan goi policy_update() (khac voi bien "i" cuc
@@ -232,6 +234,12 @@ class TrainPipeline():
         if (init_model is not None) and os.path.exists(init_model):
             # start training from an initial policy-value net
             self.policy_value_net = PolicyValueNet(self.board_width,self.board_height,block=self.resnet_block,init_model=init_model,cuda=True)
+            # init_model co the la 'tmp/current_policy.model.pt':
+            # - os.path.splitext(init_model)[0] -> 'tmp/current_policy.model'
+            # - can strip them .model va .pt de lay ten co ban 'current_policy'
+            # base_model_path = os.path.splitext(os.path.splitext(init_model)[0])[0]
+            # buffer_path = base_model_path + '_buffer.pkl'
+            # self.load_replay_buffer(buffer_path)
         elif (transfer_model is not None) and os.path.exists(transfer_model):
             # start training from a pre-trained policy-value net
             self.policy_value_net = PolicyValueNet(self.board_width,self.board_height,block=self.resnet_block,transfer_model=transfer_model,cuda=True)
@@ -317,7 +325,6 @@ class TrainPipeline():
                     "Timestamp",
                     "Worker PID",
                     "Winner",
-                    "Result (AlphaZero - Opponent)",
                     "So nuoc di",
                     "Thoi gian (s)"
                 ])
@@ -375,6 +382,52 @@ class TrainPipeline():
                 round(train_time_total, 2),
                 round(elapsed_time / 3600, 3)
             ])
+
+    def save_replay_buffer_async(self, path):
+        """
+        Ghi buffer xuong dia trong thread rieng de khong chan main loop.
+        Snapshot (list(deque)) duoc lay ngay tai thoi diem goi ham nay,
+        nen du sau do data_buffer bi mutate tiep cung khong anh huong.
+        """
+        snapshot = list(self.data_buffer)
+
+        def _write(data, out_path):
+            tmp_path = out_path + '.tmp'
+            try:
+                with open(tmp_path, 'wb') as f:
+                    pickle.dump(data, f, protocol=pickle.HIGHEST_PROTOCOL)
+                os.replace(tmp_path, out_path)  # atomic, an toan neu crash giua chung
+            except Exception as e:
+                print(f"[Loi] Ghi replay buffer that bai: {e}")
+
+        # doi thread ghi truoc do xong (neu con dang chay) de tranh dam vao nhau
+        if self._buffer_save_thread is not None and self._buffer_save_thread.is_alive():
+            self._buffer_save_thread.join()
+
+        self._buffer_save_thread = threading.Thread(
+            target=_write, args=(snapshot, path), daemon=True
+        )
+        self._buffer_save_thread.start()
+
+    def wait_buffer_save_done(self):
+        """Goi truoc khi thoat process de dam bao ghi xong hoan toan."""
+        if self._buffer_save_thread is not None and self._buffer_save_thread.is_alive():
+            self._buffer_save_thread.join()
+
+    def load_replay_buffer(self, path):
+        if os.path.exists(path):
+            try:
+                with open(path, 'rb') as f:
+                    loaded = pickle.load(f)
+                self.data_buffer = deque(loaded, maxlen=self.buffer_size)
+                print(f"Da load lai replay buffer tu {path}: {len(self.data_buffer)} mau")
+                return True
+            except Exception as e:
+                print(f"[Canh bao] Khong load duoc buffer tu {path}: {e}")
+                return False
+        else:
+            print(f"Khong tim thay buffer tai {path}, bat dau voi buffer rong")
+            return False
 
     def save_evaluation_log(self,
                         checkpoint,
@@ -481,9 +534,9 @@ class TrainPipeline():
 
         # 4) gom ket qua tu tat ca cac van (nhu vong lap cu, chi khac la
         #    du lieu da duoc choi song song thay vi tuan tu)
-        for winner, play_data, total_moves in results:
+        for winner, play_data in results:
             play_data = list(play_data)[:]
-            self.episode_len = total_moves
+            self.episode_len = len(play_data)
             # augment the data
             play_data = self.get_equi_data(play_data)
             self.data_buffer.extend(play_data)
@@ -581,13 +634,13 @@ class TrainPipeline():
 
         # test_player = MCTS_Pure(c_puct=5,
         #                         n_playout=self.pure_mcts_playout_num)
-        test_player = GreedyPlayer()
-        # test_player = MCTSPlayer(policy_value_function=self.policy_value_net.policy_value_fn_random,
-        #                                action_fc=self.policy_value_net.action_fc_test,
-        #                                evaluation_fc=self.policy_value_net.evaluation_fc2_test,
-        #                                c_puct=5,
-        #                                n_playout=400,
-        #                                is_selfplay=False)
+        # test_player = GreedyPlayer()
+        test_player = MCTSPlayer(policy_value_function=self.policy_value_net.policy_value_fn_random,
+                                       action_fc=self.policy_value_net.action_fc_test,
+                                       evaluation_fc=self.policy_value_net.evaluation_fc2_test,
+                                       c_puct=5,
+                                       n_playout=1000,
+                                       is_selfplay=False)
         
         win_cnt = defaultdict(int)
         for i in range(n_games):
@@ -664,6 +717,7 @@ class TrainPipeline():
 
                     # save current model for evaluating
                     self.policy_value_net.save_model('tmp/current_policy.model')
+                    self.save_replay_buffer_async('tmp/current_policy_buffer.pkl')
                     if (i+1) % self.check_freq == 0:
                     # if (i+1) % (self.check_freq*2) == 0:
                         print("current self-play batch: {}".format(i + 1))
@@ -680,6 +734,7 @@ class TrainPipeline():
                             best_updated = True
                             self.best_win_ratio = win_ratio
                             self.policy_value_net.save_model('model/best_policy.model')
+                            self.save_replay_buffer_async('model/best_policy_buffer.pkl')
                             
                             # if (self.best_win_ratio == 1.0 and self.pure_mcts_playout_num < 5000):
                             #     # increase playout num and  reset the win ratio
@@ -691,14 +746,19 @@ class TrainPipeline():
                             #     self.best_win_ratio = 0.0
                         self.save_evaluation_log(
                                 checkpoint=i+1,
-                                n_games=100,
-                                opponent="Greedy",
+                                n_games=2,
+                                opponent="AlphaZero",
                                 win_cnt=win_cnt,
                                 win_ratio=win_ratio,
                                 best_updated=best_updated,
                                 eval_time=evaluate_time
                             )
         except KeyboardInterrupt:
+            print("\nNhan Ctrl+C, dang luu checkpoint truoc khi thoat...")
+            self.policy_value_net.save_model('tmp/current_policy.model')
+            self.save_replay_buffer_async('tmp/current_policy_buffer.pkl')
+            self.wait_buffer_save_done()   # QUAN TRONG: doi ghi xong hoan toan roi moi thoat
+            print("Da luu xong model + replay buffer. Thoat an toan.")
             print('\n\rquit')
 
 if __name__ == '__main__':

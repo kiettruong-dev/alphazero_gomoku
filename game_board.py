@@ -336,22 +336,22 @@ class Game(object):
                 self.graphic(self.board, player1.player, player2.player)
             end, winner = self.board.game_end()
 
-            if end:
-                if is_shown:
-                    if winner != -1:
-                        print("Game end. Winner is", players[winner])
-                    else:
-                        print("Game end. Tie")
-                return winner
             # if end:
             #     if is_shown:
-            #         if winner == p1:
-            #             print("Game end. Winner is AlphaZero X")
-            #         elif winner == p2:
-            #             print("Game end. Winner is AlphaZero O")
+            #         if winner != -1:
+            #             print("Game end. Winner is", players[winner])
             #         else:
             #             print("Game end. Tie")
             #     return winner
+            if end:
+                if is_shown:
+                    if winner == p1:
+                        print("Game end. Winner is AlphaZero X")
+                    elif winner == p2:
+                        print("Game end. Winner is AlphaZero O")
+                    else:
+                        print("Game end. Tie")
+                return winner
 
     def start_play_with_UI(self, AI, start_player=0):
         '''
@@ -464,7 +464,9 @@ class Game(object):
                         print("Game end. Winner is player:", winner)
                     else:
                         print("Game end. Tie")
-                return winner, zip(states, mcts_probs, winners_z)
+                      
+                winner_name = 'AlphaZero X' if winner == p1 else 'AlphaZero O' if winner == p2 else 'Tie'
+                return winner, zip(states, mcts_probs, winners_z), winner_name
     
 
     def start_self_play_with_greedy(self, player, is_shown=0):
